@@ -27,9 +27,10 @@ public class BukuServiceImpl implements BukuService {
     }
 
     @Override
-    public Buku getBukuById(UUID kodeBuku) {
-        for (Buku buku : listBuku) {
-            if (buku.getId().equals(kodeBuku)) {
+    public Buku getBukuById(UUID id) {
+        for (int i = 0; i < listBuku.size(); i++) {
+            Buku buku = listBuku.get(i);
+            if (buku.getId().equals(id)) {
                 return buku;
             }
         }
@@ -38,31 +39,50 @@ public class BukuServiceImpl implements BukuService {
 
     @Override
     public Buku updateBuku(UUID id, Buku updatedBuku) {
-        Buku buku = listBuku.stream()
-            .filter(b -> b.getId().equals(id))
-            .findAny()
-            .orElse(null);
-        if (buku != null){
-            buku.setHarga(updatedBuku.getHarga());
-            buku.setJudul(updatedBuku.getJudul());
-            buku.setPenulis(updatedBuku.getPenulis());
-            buku.setJudul(updatedBuku.getJudul());
+        for (Buku buku : listBuku) {
+            if (buku.getId().equals(id)) {
+                buku.setJudul(updatedBuku.getJudul());
+                buku.setPenulis(updatedBuku.getPenulis());
+                buku.setTahunTerbit(updatedBuku.getTahunTerbit());
+                buku.setHarga(updatedBuku.getHarga());
+                return buku;
+            }
         }
-        return buku;
+        return null; // Tidak ada buku yang sesuai dengan ID
     }
 
     @Override
     public void deleteBuku(UUID id) {
-        listBuku.removeIf(b -> b.getId().equals(id));
+        Buku bukuToRemove = null;
+        for (Buku buku : listBuku) {
+            if (buku.getId().equals(id)) {
+                bukuToRemove = buku;
+                break;
+            }
+        }
+
+        if (bukuToRemove != null) {
+            listBuku.remove(bukuToRemove);
+        }
     }
 
     @Override
     public boolean isJudulExist(String judul) {
-        return listBuku.stream().anyMatch(b -> b.getJudul().equals(judul));
+        for (Buku buku : listBuku) {
+            if (buku.getJudul().equals(judul)) {
+                return true; // Ada nih judul bukunya sama
+            }
+        }
+        return false; // Gaada buku yang judulnya sama
     }
 
     @Override
     public boolean isJudulExist(String judul, UUID id) {
-        return listBuku.stream().anyMatch(b -> b.getJudul().equals(judul) && !b.getId().equals(id));
+        for (Buku buku : listBuku) {
+            if (buku.getJudul().equals(judul) && !buku.getId().equals(id)) {
+                return true; // Ada buku yang judul & ID nya sama
+            }
+        }
+        return false; // Gaada buku yang judul & ID nya sama
     }
 }

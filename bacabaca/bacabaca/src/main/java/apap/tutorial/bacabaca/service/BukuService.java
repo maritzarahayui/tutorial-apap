@@ -15,11 +15,11 @@ public interface BukuService {
     // Method untuk mendapatkan data buku berdasarkan kode buku
     Buku getBukuById(UUID id);
 
-    boolean isJudulExist(String judul);
-
-    boolean isJudulExist(String judul, UUID id);
-
     Buku updateBuku(UUID id, Buku buku);
 
     void deleteBuku(UUID id);
+
+    boolean isJudulExist(String judul);
+
+    boolean isJudulExist(String judul, UUID id);
 }
