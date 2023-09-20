@@ -1,8 +1,12 @@
 package apap.tutorial.bacabaca.controller;
 
-import apap.tutorial.bacabaca.controller.DTO.BukuDTO;
+import apap.tutorial.bacabaca.dto.BukuMapper;
+import apap.tutorial.bacabaca.dto.request.CreateBukuRequestDTO;
+import apap.tutorial.bacabaca.dto.request.UpdateBukuRequestDTO;
 import apap.tutorial.bacabaca.model.Buku;
 import apap.tutorial.bacabaca.service.BukuService;
+import apap.tutorial.bacabaca.service.PenerbitService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -13,9 +17,14 @@ import java.util.UUID;
 
 @Controller
 public class BukuController {
+    @Autowired
+    private BukuMapper bukuMapper;
 
     @Autowired
     private BukuService bukuService;
+
+    @Autowired
+    private PenerbitService penerbitService;
 
     @GetMapping("/")
     public String home() {
@@ -25,17 +34,18 @@ public class BukuController {
     @GetMapping("buku/create")
     public String formAddBuku(Model model) {
         // Membuat DTO baru sebagai isian form pengguna
-        var bukuDTO = new BukuDTO();
+        var bukuDTO = new CreateBukuRequestDTO();
 
         model.addAttribute("bukuDTO", bukuDTO);
+        model.addAttribute("listPenerbit", penerbitService.getAllPenerbit());
 
         return "form-create-buku";
     }
 
     @PostMapping("buku/create")
-    public String addBuku(@ModelAttribute BukuDTO bukuDTO, Model model) {
+    public String addBuku(@Valid @ModelAttribute CreateBukuRequestDTO bukuDTO, Model model) {
         // Generate id buku dengan UUID
-        UUID newId = UUID.randomUUID();
+//        UUID newId = UUID.randomUUID();
 
         if (bukuService.isJudulExist(bukuDTO.getJudul())) {
             var errorMessage = "Maaf, judul buku sudah ada";
@@ -44,11 +54,10 @@ public class BukuController {
         }
         
         // Membuat object Buku dengan data yang berasal dari DTO
-        var buku = new Buku(newId, bukuDTO.getJudul(), 
-            bukuDTO.getPenulis(), bukuDTO.getTahunTerbit(), bukuDTO.getHarga());
+        var buku = bukuMapper.createBukuRequestDTOToBuku(bukuDTO);
 
         // Memanggil Service addBuku
-        bukuService.createBuku(buku);
+        bukuService.saveBuku(buku);
 
         // Add variabel id buku ke 'id' untuk dirender di thymeleaf
         model.addAttribute("id", buku.getId());
@@ -84,29 +93,27 @@ public class BukuController {
         var buku = bukuService.getBukuById(id);
 
         // Memindahkan data buku ke DTO
-        var bukuDTO = new BukuDTO(buku.getId(), 
-            buku.getJudul(), buku.getPenulis(), buku.getTahunTerbit(), buku.getHarga());
+        var bukuDTO = bukuMapper.bukuToUpdateBukuRequestDTO(buku);
         
         // Add variabel ke bukuDTO untuk dirender pada thymeleaf
+        model.addAttribute("listPenerbit", penerbitService.getAllPenerbit());
         model.addAttribute("bukuDTO", bukuDTO);
 
         return "form-update-buku";
     }
 
     @PostMapping("buku/update")
-    public String updateBuku(@ModelAttribute BukuDTO updatedBukuDTO, Model model) {
-        // Validasi jika buku sudah pernah didaftarkan
-        if (bukuService.isJudulExist(updatedBukuDTO.getJudul(), updatedBukuDTO.getId())) {
+    public String updateBuku(@ModelAttribute UpdateBukuRequestDTO bukuDTO, Model model) {
+        if (bukuService.isJudulExist(bukuDTO.getJudul(), bukuDTO.getId())) {
             var errorMessage = "Maaf, judul buku sudah ada";
             model.addAttribute("errorMessage", errorMessage);
             return "error-view";
         }
 
-        var buku = new Buku(updatedBukuDTO.getId(), updatedBukuDTO.getJudul(), 
-            updatedBukuDTO.getPenulis(), updatedBukuDTO.getTahunTerbit(), updatedBukuDTO.getHarga());
+        var bukuFromDto = bukuMapper.updateBukuRequestDTOToBuku(bukuDTO);
 
-        // Update variabel buku dengan memanggil service updateBuku
-        bukuService.updateBuku(buku.getId(),buku);
+        // Memanggil Serivce updateBuku
+        var buku = bukuService.updateBuku(bukuFromDto);
 
         // Add variabel ke id untuk dirender pada thymeleaf
         model.addAttribute("id", buku.getId());
@@ -120,8 +127,10 @@ public class BukuController {
 
     @GetMapping("buku/{id}/delete")
     public String deleteBuku(@PathVariable("id") UUID id, Model model) {
+        var buku =  bukuService.getBukuById(id);
+
         // Memanggil service deleteBuku untuk menghapus buku dengan ID yang sesuai
-        bukuService.deleteBuku(id);
+        bukuService.deleteBuku(buku);
 
         // Add variabel ke id untuk dirender pada thymeleaf
         model.addAttribute("id", id);

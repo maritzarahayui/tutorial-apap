@@ -6,8 +6,7 @@ import java.util.List;
 import java.util.UUID;
 
 public interface BukuService {
-    // Method untuk menambahkan buku
-    void createBuku(Buku buku);
+    void saveBuku(Buku buku);
 
     // Method untuk mendapatkan buku yang telah tersimpan
     List<Buku> getAllBuku();
@@ -15,11 +14,11 @@ public interface BukuService {
     // Method untuk mendapatkan data buku berdasarkan kode buku
     Buku getBukuById(UUID id);
 
-    Buku updateBuku(UUID id, Buku buku);
-
-    void deleteBuku(UUID id);
-
     boolean isJudulExist(String judul);
 
     boolean isJudulExist(String judul, UUID id);
+
+    Buku updateBuku(Buku buku);
+
+    void deleteBuku(Buku buku);
 }
