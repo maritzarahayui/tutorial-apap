@@ -21,4 +21,8 @@ public interface BukuService {
     Buku updateBuku(Buku buku);
 
     void deleteBuku(Buku buku);
+
+    List<Buku> getAllBukuOrderedByJudul();
+
+    List<Buku> searchBukuByJudul(String searchJudul);
 }

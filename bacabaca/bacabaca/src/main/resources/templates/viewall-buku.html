@@ -13,6 +13,18 @@
   <div class="text-center pt-5">
     <h2>Daftar Buku</h2>
   </div>
+
+  <div class="text-center mt-3">
+    <form th:action="@{/buku/search}" method="get">
+      <div class="input-group mb-3">
+        <input type="text" name="searchJudul" class="form-control" placeholder="Cari berdasarkan judul..." />
+        <div class="input-group-append">
+          <button type="submit" class="btn btn-primary">Cari</button>
+        </div>
+      </div>
+    </form>
+  </div>
+
   <div th:each="buku: ${listBuku}">
     <div class="row justify-content-center m-2">
       <div class="card" style="width: 30rem;">

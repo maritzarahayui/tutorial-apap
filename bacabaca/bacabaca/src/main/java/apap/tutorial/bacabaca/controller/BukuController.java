@@ -3,15 +3,20 @@ package apap.tutorial.bacabaca.controller;
 import apap.tutorial.bacabaca.dto.BukuMapper;
 import apap.tutorial.bacabaca.dto.request.CreateBukuRequestDTO;
 import apap.tutorial.bacabaca.dto.request.UpdateBukuRequestDTO;
+import apap.tutorial.bacabaca.dto.response.ReadBukuResponseDTO;
 import apap.tutorial.bacabaca.model.Buku;
 import apap.tutorial.bacabaca.service.BukuService;
 import apap.tutorial.bacabaca.service.PenerbitService;
+import io.micrometer.common.util.StringUtils;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -43,9 +48,23 @@ public class BukuController {
     }
 
     @PostMapping("buku/create")
-    public String addBuku(@Valid @ModelAttribute CreateBukuRequestDTO bukuDTO, Model model) {
+    public String addBuku(@Valid @ModelAttribute CreateBukuRequestDTO bukuDTO, BindingResult bindingResult, Model model) {
         // Generate id buku dengan UUID
 //        UUID newId = UUID.randomUUID();
+
+        if (bindingResult.hasErrors()){
+            List<ObjectError> err = bindingResult.getAllErrors();
+
+            StringBuilder errorMessage = new StringBuilder();
+
+            for(ObjectError r : err){
+                errorMessage.append(r.getDefaultMessage());
+                errorMessage.append("\n");
+            }
+
+            model.addAttribute("errorMessage", errorMessage);
+            return "error-view";
+        }
 
         if (bukuService.isJudulExist(bukuDTO.getJudul())) {
             var errorMessage = "Maaf, judul buku sudah ada";
@@ -71,19 +90,29 @@ public class BukuController {
     @GetMapping("buku/viewall")
     public String listBuku(Model model) {
         // Mendapatkan semua buku
-        List<Buku> listBuku = bukuService.getAllBuku();
+//        List<Buku> list = bukuService.getAllBuku();
+        List<Buku> filtered = new ArrayList<>();
+
+        for(Buku b : bukuService.getAllBukuOrderedByJudul()){
+            if(!b.isDeleted()){
+                filtered.add(b);
+            }
+        }
 
         // Add variabel semua bukuModel ke "ListBuku" untuk dirender pada thymeleaf
-        model.addAttribute("listBuku", listBuku);
+        model.addAttribute("listBuku", filtered);
         return "viewall-buku";
     }
 
     @GetMapping("buku/{id}")
     public String detailBuku(@PathVariable("id") UUID id, Model model) {
         // Mendapatkan buku melalui kodeBuku
-        var buku = bukuService.getBukuById(id);
+//        var buku = bukuService.getBukuById(id);
 
-        model.addAttribute("buku", buku);
+        Buku buku = bukuService.getBukuById(id);
+        ReadBukuResponseDTO bukuResponseDTO = bukuMapper.bukuToReadBukuResponseDTO(buku);
+
+        model.addAttribute("buku", bukuResponseDTO);
         return "view-buku";
     }
 
@@ -103,7 +132,21 @@ public class BukuController {
     }
 
     @PostMapping("buku/update")
-    public String updateBuku(@ModelAttribute UpdateBukuRequestDTO bukuDTO, Model model) {
+    public String updateBuku(@Valid @ModelAttribute UpdateBukuRequestDTO bukuDTO, BindingResult bindingResult, Model model) {
+        if (bindingResult.hasErrors()){
+            List<ObjectError> err = bindingResult.getAllErrors();
+
+            StringBuilder errorMessage = new StringBuilder();
+
+            for(ObjectError r : err){
+                errorMessage.append(r.getDefaultMessage());
+                errorMessage.append("\n");
+            }
+
+            model.addAttribute("errorMessage", errorMessage);
+            return "error-view";
+        }
+
         if (bukuService.isJudulExist(bukuDTO.getJudul(), bukuDTO.getId())) {
             var errorMessage = "Maaf, judul buku sudah ada";
             model.addAttribute("errorMessage", errorMessage);
@@ -138,4 +181,21 @@ public class BukuController {
         // Feedback bahwa data berhasil dihapus
         return "success-delete-buku";
     }
+
+    @GetMapping("/buku/search")
+    public String searchBukuByJudul(@RequestParam(name = "searchJudul", required = false) String searchJudul, Model model) {
+        List<Buku> listBuku;
+
+        // Kalo search field ga kosong, bakal nyari bukunya
+        if (StringUtils.isNotBlank(searchJudul)) {
+            listBuku = bukuService.searchBukuByJudul(searchJudul);
+        } else {
+            // Kalo search field kosong, by default bakal nampilin semua buku
+            listBuku = bukuService.getAllBukuOrderedByJudul();
+        }
+
+        model.addAttribute("listBuku", listBuku);
+        return "viewall-buku";
+    }
+
 }

@@ -64,6 +64,34 @@ public class BukuServiceImpl implements BukuService {
 
     @Override
     public void deleteBuku(Buku buku){
-        bukuDb.delete(buku);
+        buku.setDeleted(true);
+        bukuDb.save(buku);
     }
+
+//    @Override
+//    public List<Buku> getAllBukuOrderedByJudul() {
+////        return bukuDb.findAllByOrderByJudulAsc();
+//        return bukuDb.findAllByOrderByJudulAsc().stream()
+//                .filter(buku -> !buku.isDeleted())
+//                .collect(Collectors.toList());
+//    }
+
+    // Method untuk mendapatkan daftar buku yang belum dihapus
+//    @Override
+//    public List<Buku> getNonDeletedBuku() {
+//        return BukuDb.tidakDihapus();
+//    }
+
+    // Method untuk mencari buku berdasarkan judul
+    @Override
+    public List<Buku> searchBukuByJudul(String searchJudul) {
+        return bukuDb.findBukuByJudulContainingIgnoreCaseOrderByJudulAsc(searchJudul);
+    }
+
+    // Method untuk menampilkan buku berdasarkan judul secara Ascending (A -> Z)
+    @Override
+    public List<Buku> getAllBukuOrderedByJudul() {
+        return bukuDb.findAllByOrderByJudulAsc();
+    }
+
 }

@@ -46,4 +46,6 @@ public class Buku {
     inverseJoinColumns = @JoinColumn(name = "id_penulis"))
     List<Penulis> listPenulis;
 
+    @Column(name = "is_deleted")
+    private boolean isDeleted = false;
 }

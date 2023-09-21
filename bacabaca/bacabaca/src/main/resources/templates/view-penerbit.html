@@ -36,7 +36,7 @@
                         </thead>
                         <tbody>
                         <!-- Iterate through the list of Buku objects -->
-                        <tr th:each="buku : ${penerbit.listBuku}">
+                        <tr th:each="buku : ${penerbit.listBuku}" th:if="${!buku.isDeleted}">
                             <td th:text="${buku.judul}"></td>
                             <td th:text="${buku.tahunTerbit}"></td>
                             <td th:text="${buku.harga}"></td>
