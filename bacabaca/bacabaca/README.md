@@ -1,7 +1,7 @@
 ---
 ## Tutorial 3
 ### What I have learned today
-Database, Mapper, Repository
+Database, Mapper, dan Repository
 
 ### Pertanyaan
 1. Jelaskan apa itu ORM pada spring serta apa fungsi dan kegunaanya?
