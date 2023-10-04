@@ -9,6 +9,7 @@
 </head>
 
 <body>
+<nav th:replace="~{fragments/navbar :: navbar}"></nav>
 <div class="container">
   <div class="card m-4 p-4">
     <div class="card-body">
@@ -37,6 +38,31 @@
               <select class="form-control" name="idPenerbit" id="idPenerbit" th:field="*{penerbit}">
                 <option th:each="penerbit: ${listPenerbit}" th:value="${penerbit.idPenerbit}" th:text="${penerbit.namaPenerbit}"></option>
               </select>
+            </tr>
+            </tbody>
+          </table>
+
+          Penulis: <br>
+          <table class="table">
+            <th class="d-flex justify-content-end">
+              <button class="btn btn-primary" type="submit" name="addRow" style="text-align: right;">Tambah Row</button>
+            </th>
+
+            <tbody>
+            <tr th:each="penulis, iterationStatus : *{listPenulis}">
+              <td>
+                <select th:field="*{listPenulis[__${iterationStatus.index}__].idPenulis}" class="form-control">
+                  <div th:each="penulisExisting : ${listPenulisExisting}">
+                    <option th:value="${penulisExisting.idPenulis}" th:text="${penulisExisting.namaPenulis}"></option>
+                  </div>
+                </select>
+              </td>
+
+              <td>
+                <button th:value="${iterationStatus.index}" class="btn btn-danger" type="submit" name="deleteRow">
+                  Hapus
+                </button>
+              </td>
             </tr>
             </tbody>
           </table>

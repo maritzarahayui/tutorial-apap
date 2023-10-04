@@ -33,6 +33,7 @@ public class PenerbitController {
         // Menambah penerbitDTO ke model thymyleaf
         model.addAttribute("penerbitDTO", penerbitDTO);
 
+        model.addAttribute("activePage", "Penerbit");
         return "form-create-penerbit";
     }
 
@@ -47,6 +48,7 @@ public class PenerbitController {
         // Menambah penerbit ke model thymyleaf
         model.addAttribute("penerbit", createPenerbitRequestDTO);
 
+        model.addAttribute("activePage", "Penerbit");
         return "success-create-penerbit";
     }
 
@@ -58,6 +60,7 @@ public class PenerbitController {
         // Menambah penerbitDTO ke model thymyleaf
         model.addAttribute("listPenerbit", listPenerbit);
 
+        model.addAttribute("activePage", "Penerbit");
         return "viewall-penerbit";
     }
 
@@ -67,6 +70,8 @@ public class PenerbitController {
         var penerbit = penerbitService.getPenerbitById(idPenerbit);
 
         model.addAttribute("penerbit", penerbit);
+
+        model.addAttribute("activePage", "Penerbit");
         return "view-penerbit";
     }
 }

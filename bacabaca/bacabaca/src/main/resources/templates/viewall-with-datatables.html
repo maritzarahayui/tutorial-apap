@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8" />
+    <object th:include="~{fragments/common :: js}" th:remove="tag"></object>
+    <object th:include="~{fragments/common :: css}" th:remove="tag"></object>
+    <title>View All Buku</title>
+
+    <style>
+        table#dataTables td:nth-child(1),
+        table#dataTables td:nth-child(6) {
+            text-align: center;
+        }
+
+        table#dataTables th {
+            text-align: center;
+        }
+    </style>
+</head>
+
+<body>
+<nav th:replace="~{fragments/navbar :: navbar}"></nav>
+<div class="container">
+    <div class="text-center pt-5">
+        <h2>Daftar Buku</h2>
+    </div>
+
+    <div class="text-center m-3">
+        <a type="button" class="btn btn-primary m-2" href="/buku/create">Tambah Buku</a>
+        <a type="button" class="btn btn-md btn-primary" href="/">Home</a>
+    </div>
+
+    <table id="dataTables" class="table table-bordered">
+        <thead>
+            <tr>
+                <th>No</th>
+                <th>Judul</th>
+                <th>Nama Penulis</th>
+                <th>Nama Penerbit</th>
+                <th>Harga</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="buku, nomor: ${listBuku}">
+                <td th:text="${nomor.index + 1}"></td>
+                
+                <td th:text="${buku.judul}"></td>
+
+                <td>
+                    <span th:each="penulis, iterationStatus: ${buku.listPenulis}">
+                        <span th:text="${penulis.namaPenulis}"></span>
+                        <span th:unless="${iterationStatus.last}">, </span>
+                    </span>
+                    <span th:if="${buku.listPenulis.size() == 0}">Penulis belum ter-record</span>
+                </td>
+
+                <td th:text="${buku.penerbit.namaPenerbit}"></td>
+                    <td th:text="'Rp' + ${buku.harga}"></td>
+                    <td>
+                        <div class="btn-group">
+                            <a class="btn btn-md btn-primary mx-2" th:href="@{/buku/{id}(id=${buku.id})}">Detail</a>
+                            <a class="btn btn-md btn-warning mx-2" th:href="@{/buku/{id}/update(id=${buku.id})}">Ubah</a>
+                            <a class="btn btn-md btn-danger mx-2" th:href="@{/buku/{id}/delete(id=${buku.id})}">Hapus</a>
+                        </div>
+                    </td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+</body>
+
+<script>
+    $(document).ready(function () {
+       var table = $('#dataTables').DataTable({
+          "paging": true,
+          "pageLength": 3,
+          "lengthMenu": [5, 10, 20],
+          "columnDefs": [
+            { "orderable": false, "targets": 5 }
+          ]
+       });
+    });
+ </script>
+
+</html>
