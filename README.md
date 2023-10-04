@@ -3,6 +3,109 @@
 ## Authors
 
 * **Maritza Rahayu Indriyani** - *2106751474* - *A* 
+---
+## Tutorial 4
+### What I have learned today
+Presentation Layer & Spring Profiles
+
+### Pertanyaan
+1. Pada file html project bacabaca, terdapat baris kode berikut.
+`<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://thymeleaf.org">`
+Apa itu xmlns? Jawab dengan singkat dan padat.
+
+xmlns adalah singkatan dari XML Namespace. Atribut ini digunakan dalam dokumen XML atau XHTML untuk mendefinisikan namespace yang digunakan dalam dokumen tersebut.
+
+- `html lang="en"` : mengatur bahasa utama yang digunakan dalam dokumen HTML ke bahasa Inggris (English)
+- `xmlns="http://www.w3.org/1999/xhtml"` : mendefinisikan namespace utama dokumen sebagai XHTML, yaitu versi XML dari HTML
+- `xmlns:th="http://thymeleaf.org"` : enambahkan namespace dengan alias "th" yang mengacu pada namespace untuk Thymeleaf
+
+2. Jelaskan perbedaan th:include dan th:replace! Jawab dengan singkat dan padat.
+
+- `th:include` : Menggantikan konten elemen target dengan konten dari sumber yang disebutkan. Elemen target tetap ada dalam dokumen dengan kontennya yang digantikan.
+- `th:replace` : Sepenuhnya menggantikan elemen target dengan konten dari sumber yang disebutkan. Elemen target tidak akan ada dalam dokumen hasil.
+
+3. Kapan sebaiknya kita menggunakan static files dibandingkan dengan file eksternal menggunakan link?  Jawab dengan singkat dan padat.
+
+Kita sebaiknya menggunakan `static files` ketika konten tersebut stabil, tidak berubah-ubah, dan tidak memerlukan interaksi server. Menggunakan link untuk `file eksternal` lebih cocok ketika konten tersebut dinamis atau perlu diambil dari sumber eksternal, seperti data yang diperbarui secara berkala atau perlu disesuaikan dengan pengguna tertentu.
+
+4. Jelaskan caramu menyelesaikan latihan no 2.
+
+Menambahkan kode berikut pada `BukuController.java`
+```BukuController.java
+@PostMapping(value = "buku/update", params = {"addRow"})
+public String addRowPenulisBuku(@ModelAttribute UpdateBukuRequestDTO updateBukuRequestDTO, Model model){
+   if(updateBukuRequestDTO.getListPenulis() == null || updateBukuRequestDTO.getListPenulis().size() == 0){
+      updateBukuRequestDTO.setListPenulis(new ArrayList<>());
+   }
+
+   updateBukuRequestDTO.getListPenulis().add(new Penulis());
+
+   model.addAttribute("listPenulisExisting", penulisService.getAllPenulis());
+   model.addAttribute("listPenerbit", penerbitService.getAllPenerbit());
+   model.addAttribute("bukuDTO", updateBukuRequestDTO);
+
+   model.addAttribute("activePage", "Buku");
+   return "form-update-buku";
+}
+
+@PostMapping(value = "buku/update", params = {"deleteRow"})
+public String deleteRowPenulisBuku(@ModelAttribute UpdateBukuRequestDTO updateBukuRequestDTO, @RequestParam("deleteRow") int row, Model model){
+   updateBukuRequestDTO.getListPenulis().remove(row);
+
+   model.addAttribute("bukuDTO", updateBukuRequestDTO);
+   model.addAttribute("listPenulisExisting", penulisService.getAllPenulis());
+   model.addAttribute("listPenerbit", penerbitService.getAllPenerbit());
+
+   model.addAttribute("activePage", "Buku");
+   return "form-update-buku";
+}
+```
+
+Menambahkan kode berikut pada `form-update-buku.html`
+```form-update-buku.html
+Penulis: <br>
+<table class="table">
+<th class="d-flex justify-content-end">
+   <button class="btn btn-primary" type="submit" name="addRow" style="text-align: right;">Tambah Row</button>
+</th>
+
+<tbody>
+<tr th:each="penulis, iterationStatus : *{listPenulis}">
+   <td>
+      <select th:field="*{listPenulis[__${iterationStatus.index}__].idPenulis}" class="form-control">
+      <div th:each="penulisExisting : ${listPenulisExisting}">
+         <option th:value="${penulisExisting.idPenulis}" th:text="${penulisExisting.namaPenulis}"></option>
+      </div>
+      </select>
+   </td>
+
+   <td>
+      <button th:value="${iterationStatus.index}" class="btn btn-danger" type="submit" name="deleteRow">
+      Hapus
+      </button>
+   </td>
+</tr>
+</tbody>
+</table>
+```
+
+5. Jelaskan apa itu pagination! Jawab dengan singkat dan padat.
+
+Pagination adalah teknik untuk membagi konten atau data menjadi beberapa halaman yang dapat diakses secara terpisah sehingga memungkinkan pengguna untuk menavigasi dan melihat data dalam jumlah besar dengan cara yang lebih teratur, membaginya menjadi halaman-halaman yang lebih kecil dan dapat diakses dengan tombol atau tautan.
+
+6. Sebutkan salah satu skenario yang mengharuskan adanya perbedaan dev dan prod dan jelaskan alasannya!
+
+Skenario : penggunaan database
+Pada `prod`, database dapat berisi data pengguna yang sensitif, seperti informasi pribadi atau keuangan. Pada `dev`, data ini harus disaring untuk melindungi privasi pengguna dan mematuhi regulasi privasi data.
+
+Oleh karena itu, database `dev` mungkin menggunakan dummy data atau data yang telah diubah sedemikian rupa sehingga tidak sensitif, sedangkan database `prod` akan memiliki akses sesungguhnya ke data-data yang sensitif. Hal ini juga melibatkan konfigurasi koneksi database yang berbeda antara dev dan prod untuk mengarahkan ke database yang sesuai.
+
+7. Lampirkan screenshot kalau kamu sudah berhasil membuat user untuk environment production serta bukti bahwa kamu sudah berhasil mengakses database production dengan user tersebut!
+
+![Alt text](<skrinsut nomor 7.png>)
+
+### What I did not understand
+- [ ] Masih bingung cara switch dari dev ke prod gimana
 
 ---
 ## Tutorial 3

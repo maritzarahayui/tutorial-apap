@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8" />
+    <object th:include="~{fragments/common :: js}" th:remove="tag"></object>
+    <object th:include="~{fragments/common :: css}" th:remove="tag"></object>
+    <title>Form Add Penulis</title>
+</head>
+
+<body>
+<nav th:replace="~{fragments/navbar :: navbar}"></nav>
+<div class="container">
+    <div class="card m-4 p-4">
+        <div class="card-body">
+            <div class="justify-content-center">
+                <h2>Tambah Penulis </h2>
+                <br>
+                <form th:action="@{/penulis/create}" th:object="${penulisDTO}" method="POST">
+                    Nama Penulis: <br>
+                    <input class="form-control" type="text" th:field="*{namaPenulis}" />
+                    <br><br>
+
+                    Biografi: <br>
+                    <textarea class="form-control" type="text" th:field="*{biografi}"></textarea>
+                    <br><br>
+
+                    Sertifikasi: <br>
+                    <table class="table">
+                        <th class="d-flex justify-content-end">
+                            <button class="btn btn-primary" type="submit" name="addRow" style="text-align:right">Tambah Row</button>
+                        </th>
+
+                        <tbody>
+                        <tr th:each="sertifikasi, iterationStatus : *{listSertifikasi}">
+                            <td>
+                                <input class="form-control" type="text" th:field="*{listSertifikasi[__${iterationStatus.index}__].namaSertifikasi}" placeholder="Nama Sertifikasi" />
+                            </td>
+
+                            <td>
+                                <input class="form-control" type="text" th:field="*{listSertifikasi[__${iterationStatus.index}__].penerbitSertifikasi}" placeholder="Penerbit Sertifikasi" />
+                            </td>
+                            
+                            <td>
+                                <button th:value="${iterationStatus.index}" class="btn btn-danger" type="submit" name="deleteRow">Hapus</button>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+
+                    <button class="btn btn-primary" type="submit">Submit</button>
+                    <a class="btn btn-primary" href="/">Home</a>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>
