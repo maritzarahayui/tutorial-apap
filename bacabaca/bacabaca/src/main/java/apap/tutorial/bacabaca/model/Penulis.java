@@ -1,5 +1,6 @@
 package apap.tutorial.bacabaca.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -17,6 +18,7 @@ import java.util.List;
 @AllArgsConstructor
 @Entity
 @Table(name = "penulis")
+@JsonIgnoreProperties(value = {"listBuku", "listSertifikasi"}, allowSetters = true)
 public class Penulis {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

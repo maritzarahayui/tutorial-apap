@@ -7,9 +7,12 @@ import apap.tutorial.bacabaca.dto.request.UpdateBukuRequestDTO;
 import apap.tutorial.bacabaca.dto.response.ReadBukuResponseDTO;
 import apap.tutorial.bacabaca.model.Buku;
 import apap.tutorial.bacabaca.model.Penulis;
+import apap.tutorial.bacabaca.restservice.BukuRestService;
 import apap.tutorial.bacabaca.service.BukuService;
 import apap.tutorial.bacabaca.service.PenerbitService;
 import apap.tutorial.bacabaca.service.PenulisService;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.micrometer.common.util.StringUtils;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,10 +21,10 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.reactive.function.client.WebClient;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import java.time.LocalDate;
+import java.util.*;
 
 @Controller
 public class BukuController {
@@ -36,6 +39,9 @@ public class BukuController {
 
     @Autowired
     private PenulisService penulisService;
+
+    @Autowired
+    private BukuRestService bukuRestService;
 
     @GetMapping("/")
     public String home(Model model) {
@@ -283,6 +289,19 @@ public class BukuController {
 
         model.addAttribute("activePage", "Buku");
         return "viewall-with-datatables";
+    }
+
+    @GetMapping("/buku/chart")
+    public String getTopBooksInMonth(Model model) {
+        int month = LocalDate.now().getMonthValue();
+        int year = LocalDate.now().getYear();
+
+        var listBukuPopuler = bukuRestService.getTopBooksInMonth(month, year);
+
+        model.addAttribute("listBukuPopuler", listBukuPopuler);
+
+        model.addAttribute("activePage", "Buku");
+        return "chart";
     }
 
 }

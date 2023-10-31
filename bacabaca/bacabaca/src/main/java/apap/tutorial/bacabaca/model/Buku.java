@@ -1,5 +1,6 @@
 package apap.tutorial.bacabaca.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -18,7 +19,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @Entity 
 @Table(name = "buku")
-
+@JsonIgnoreProperties(value = {"penerbit"}, allowSetters = true)
 public class Buku {
     @Id 
     private UUID id = UUID.randomUUID();
@@ -48,4 +49,7 @@ public class Buku {
 
     @Column(name = "is_deleted")
     private boolean isDeleted = false;
+
+    @Column(name = "judul_lower")
+    private String judulLower;
 }
