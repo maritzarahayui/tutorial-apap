@@ -1,4 +1,66 @@
 ---
+## Tutorial 5
+### What I have learned today
+Web Service, Postman, Rest API
+
+### Pertanyaan
+1. Apa itu Postman? Apa kegunaannya?
+
+Postman adalah aplikasi komputer yang digunakan untuk pengujian API. Postman digunakan untuk mengirim permintaan API ke server web dan menerima respons, apa pun itu.
+
+2. Apa yang terjadi ketika kita tidak menggunakan @JsonIgnoreProperties dan @JsonProperty pada model Buku dan Penulis? apabila terjadi error, mengapa hal tersebut dapat terjadi?
+
+`@JsonIgnoreProperties`
+
+Fungsi: mengabaikan properti tertentu pada objek Java saat melakukan marshalling (konversi objek Java menjadi JSON) atau unmarshalling (konversi JSON menjadi objek Java).
+
+Jika tidak digunakan, properti yang tidak cocok akan dimasukkan ke dalam JSON, sehingga bisa menyebabkan masalah format.
+
+`@JsonProperty`
+
+Fungsi: mengatur nama yang digunakan untuk properti pada objek Java dalam JSON yang dihasilkan. Ini memberikan fleksibilitas dalam mengontrol nama properti dalam JSON tanpa mengubah nama properti di kelas Java.
+
+Jika tidak digunakan, default nama properti di kelas Java akan digunakan dalam JSON.
+
+3. Pada tutorial ini, kita mencoba untuk memanggil data dengan menggunakan method GET. Namun, apakah kita dapat memanggil data dengan method lainya, seperti POST? Jelaskan pendapat kalian?
+
+Method GET digunakan untuk membaca data dan tidak mengubah data yang ada di server. Untuk mengirim (create) data baru atau mengubah (update) data yang sudah ada di server, kita dapat menggunakan method POST (atau PUT dan DELETE sesuai kebutuhan). Method POST digunakan untuk mengirimkan data baru ke server, method PUT digunakan untuk memperbarui data yang sudah ada, dan method DELETE digunakan untuk menghapus data. 
+
+Jadi, apakah kita dapat memanggil data dengan method selain GET?
+
+Ya, kita dapat menggunakan method POST (dan method lainnya) untuk mengirimkan data ke server atau mengubah data yang ada. Namun, perlu pengimplementasian endpoint yang sesuai dengan method terkait di server kita agar permintaan tersebut dapat diproses.
+
+4. Selain method GET dan POST, sebutkan dan jelaskan secara singkat HTTP request methods lainnya yang dapat kita gunakan!
+
+`PUT` : Method PUT digunakan untuk memperbarui data yang ada di server. Ketika kita mengirim permintaan PUT, kita menggantikan data di server dengan data yang dikirim. Method ini sering digunakan untuk operasi update.
+
+`DELETE` : Method DELETE digunakan untuk menghapus sumber daya dari server. Ketika kita mengirim permintaan DELETE, kita meminta server untuk menghapus sumber daya yang ditentukan. Method ini sering digunakan untuk menghapus data atau entitas tertentu.
+
+`PATCH` : Method PATCH digunakan untuk memperbarui data sebagian dari sumber daya yang ada di server. Ini berguna ketika kita hanya ingin memperbarui beberapa bagian kecil dari sumber daya tanpa menggantikan seluruhnya.
+
+`HEAD` : Method HEAD hampir mirip dengan GET, tetapi server hanya akan mengirimkan header respons tanpa tubuh (body) pesan. Ini berguna untuk memeriksa informasi header (seperti status kode atau header konten) tanpa mengunduh seluruh konten.
+
+`OPTIONS` : Method OPTIONS digunakan untuk mendapatkan informasi tentang metode-metode yang didukung oleh sumber daya atau endpoint tertentu. Ini berguna untuk mengetahui apa yang bisa dilakukan dengan sumber daya tersebut.
+
+`CONNECT` : Method CONNECT digunakan untuk menginisiasi koneksi ke sumber daya jarak jauh, seperti server proxy atau gateway. Ini digunakan dalam konteks tuneling, misalnya untuk mengakses sumber daya di balik firewall.
+
+`TRACE` : Method TRACE digunakan untuk mengembalikan permintaan yang diterima oleh server kembali ke pengirimnya. Ini digunakan untuk tujuan debugging dan diagnosa.
+
+5. Apa kegunaan atribut WebClient?
+
+`WebClient` adalah komponen atau objek yang memungkinkan kita untuk membuat permintaan HTTP ke server dan mengelola respons yang diterima dari server.
+
+Kegunaan atribut WebClient adalah sebagai berikut.
+- Membuat HTTP Request dengan memanfaatkan method GET, POST, PUT, DELETE, dan lainnya ke server.
+- Mengirim data dalam berbagai format, seperti JSON, XML, dan lainnya.
+- WebClient dapat membantu kita dalam mengelola respons yang diterima dari server.
+- WebClient juga mendukung operasi asynchronous sehingga aplikasi dapat tetap responsif sambil menunggu respons dari server.
+- WebClient dapat digunakan untuk berinteraksi dengan berbagai jenis layanan web, salah satunya adalah Restful API.
+
+### What I did not understand
+- [ ] semuanya
+
+---
 ## Tutorial 4
 ### What I have learned today
 Presentation Layer & Spring Profiles

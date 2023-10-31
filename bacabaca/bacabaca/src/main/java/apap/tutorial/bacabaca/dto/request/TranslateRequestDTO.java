@@ -1,16 +1,16 @@
 package apap.tutorial.bacabaca.dto.request;
 
-import jakarta.persistence.Id;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.UUID;
 
+@Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Data
-public class UpdateBukuRequestDTO extends CreateBukuRequestDTO {
-    @Id
-    private UUID id;
+public class TranslateRequestDTO {
+    private String sourceLanguage;
+    private String targetLanguage;
+    private UUID bookId;
 }
