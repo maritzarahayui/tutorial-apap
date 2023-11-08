@@ -5,6 +5,189 @@
 * **Maritza Rahayu Indriyani** - *2106751474* - *A* 
 
 ---
+## Tutorial 6
+### What I have learned today
+Advanced Git, JMeter, dan JConsole
+
+### Pertanyaan
+1. Apa yang menjadi penyebab dari CONFLICT tersebut?
+
+Conflict tersebut terjadi karena bagian body pada file index.html mengandung 2 isi yang berbeda.
+Pada branch `feat/tutorial-6-advancedgit-1`, isi bagian body pada `index.html` adalah "Body from feat/tutorial-6-advancedgit-1".
+Sedangkan, pada branch `tut6-for-merge`, isi bagian body pada `index.html` adalah "Body from tut6-for-merge".
+
+2. Jelaskan perbedaan dari "rebase –continue", "rebase –skip", dan "rebase –abort"!
+
+- `rebase –continue` : digunakan ketika kita sedang dalam proses rebase dan telah menyelesaikan konflik pada suatu commit. Command ini memungkinkan kita untuk melanjutkan proses rebase ke commit berikutnya.
+- `rebase –skip` : digunakan ketika kita ingin melewati commit yang tidak relevan atau tidak diperlukan ketika sedang dalam proses rebase.
+- `rebase –abort` : digunakan untuk mengembalikan branch ke keadaan sebelum kita memulai rebase, sehingga semua perubahan akan dibatalkan.
+
+3. Apa perbedaan Git Merge dengan Git Rebase? Buatlah/carilah ilustrasi yang dapat menggambarkan perbedaanya!
+
+`Git Merge` :
+- Melibatkan penggabungan dua branch secara langsung.
+- Membuat sebuah commit baru yang mencakup perubahan dari branch yang ingin digabungkan ke branch tujuan.
+- Memelihara history commit asli dari kedua branch, menciptakan grafik commit yang lebih jelas dan transparan.
+
+![img.png](img.png)
+
+`Git Rebase` :
+- Menggabungkan perubahan dari satu branch ke branch lain dengan cara "memindahkan" atau "menempatkan ulang" commit pada branch target.
+- Menghasilkan sejarah commit yang lebih linear, karena commit dari branch sumber dipindahkan ke branch target, sehingga terlihat seolah-olah commit tersebut terjadi langsung setelah commit terbaru pada branch target.
+- Biasanya menciptakan history commit yang lebih bersih, tetapi mengubah sejarah commit yang sudah ada, yang bisa mempengaruhi kolaborasi pada branch bersama.
+
+![img_1.png](img_1.png)
+
+4. Mengapa hal pada langkah no 4 bisa terjadi? Mengapa git stash menjadi solusinya?
+
+Hal tersebut bisa terjadi karena saat mencoba berpindah ke branch `feat/tutorial-6-advancedgit-1`, terdapat perubahan yang belum di-commit pada file `feature-stash.txt` di branch `feature-stash-1`. 
+Git menghalangi pergantian branch karena branch `feat/tutorial-6-advancedgit-1` memiliki perubahan yang bertentangan dengan perubahan yang ada di branch `feature-stash-1`. 
+Git melindungi kita agar perubahan yang dilakukan tidak hilang atau tertimpa.
+
+`git stash` digunakan untuk menyimpan sementara perubahan yang belum di-commit di dalam stash (seperti tempat penyimpanan sementara) sehingga memungkinkan kita untuk membersihkan working directory dan beralih ke branch lain tanpa konflik atau masalah terkait perubahan yang belum disimpan.
+
+
+5. Sebutkan dan jelaskan tiga tipe dari Git Reset!
+
+- `Soft Reset` : Soft reset memungkinkan kita untuk mengubah posisi HEAD (penanda teratas pada cabang) tetapi mempertahankan perubahan yang ada di area staging.
+  Saat melakukan soft reset, commit yang diarahkan oleh HEAD berubah, tetapi perubahan dalam working directory dan staging area tidak terpengaruh.
+  Cara kerjanya memungkinkan kita untuk membatalkan commit terakhir sambil tetap menyimpan perubahan yang sudah ada.
+- `Mixed Reset` : Ketika kita tidak memberikan tipe reset secara spesifik, by default akan dilakukan mixed reset.
+  Reset jenis ini akan mengubah posisi HEAD dan mereset perubahan di area staging (index), namun tidak mengubah perubahan dalam working directory.
+  Perubahan yang ada di commit yang di-reset kembali akan berpindah ke working directory sehingga kita dapat meninjau ulang perubahan tersebut sebelum melakukan commit ulang.
+- `Hard Reset` : Hard reset mengubah posisi HEAD, menghapus perubahan di staging area, dan mengembalikan working directory ke kondisi dari commit yang ditunjuk oleh reset.
+  Ini merupakan reset paling kuat yang mengembalikan keadaan repositori ke commit tertentu serta menghilangkan perubahan yang ada, sehingga perlu dilakukan dengan hati-hati karena dapat menyebabkan hilangnya perubahan yang belum disimpan.
+
+6. Apa itu git revert? Apa perbedaannya dengan git reset?
+
+`Git Revert` :
+- Perintah git revert digunakan untuk membatalkan sebuah commit tertentu dengan membuat commit baru yang membalik perubahan yang terjadi pada commit tersebut.
+- Git revert menghasilkan commit balik yang merepresentasikan penghapusan perubahan pada commit sebelumnya tanpa menghilangkan sejarah commit sebelumnya.
+- Menggunakan git revert, commit awal tetap ada, dan kita dapat melihat riwayat perubahan yang telah dibuat.
+
+Perbedaan utamanya :
+- `Git revert` membatalkan commit dengan membuat commit baru yang membalik perubahan, sementara `git reset` mengatur ulang keadaan repositori ke commit tertentu dan menghapus sejarah commit setelahnya.
+- `Git revert` mempertahankan sejarah commit dan menunjukkan perubahan yang dilakukan, sedangkan `git reset` menghapus sejarah commit setelahnya.
+
+7. Buatlah grafik yang menggambarkan alur commit pada bagian Git Flow and Branching ini serta jelaskan! Grafik dapat berupa tulis tangan maupun menggunakan software.
+
+![img_7.png](img_7.png)
+
+- Alur ini dimulai dari branch `main`
+- Pada branch `development` tambahkan file `base.html`.
+- Dari branch `development`, buat 2 branch baru yaitu `Feature-a` dan `Feature-b`. 
+- Sesuaikan kode pada file `base.html` pada branch `Feature-a` dan `Feature-b` seperti yang tertera pada dokumen soal.
+- Buat merge request dari branch `Feature-a` ke branch `Development`, kemudian merge.
+- Buat merge request dari branch `Feature-b` ke branch `Development`, kemudian merge. Namun, terdapat conflict sehingga kita solved conflict pada file `base.html` terlebih dahulu.
+- Setelah tidak ada conflict, maka merge dari branch `Feature-b` ke branch `Development` bisa dilakukan.
+
+8. Apa kegunaan dari langkah di atas?
+
+Langkah tersebut berguna untuk memastikan bahwa setiap permintaan yang dibuat oleh Thread Group atau request yang akan dieksekusi dalam pengujian beban memiliki header `content-type` dengan nilai `application/json` yang diperlukan ketika kita melakukan komunikasi dengan server yang mengharapkan data dalam format JSON.
+
+9. Apa itu JSON Extractor? Sebutkan semua kegunaannya di Test Plan ini!
+
+JSON Extractor pada JMeter adalah sebuah komponen yang memungkinkan ekstraksi data dari respons HTTP yang diterima dalam format JSON, kemudian menyimpan nilai-nilai ini ke dalam variabel JMeter untuk digunakan dalam langkah-langkah selanjutnya di dalam Test Plan.
+
+Kegunaan JSON Extractor dalam Test Plan ini adalah sebagai berikut.
+- Ekstraksi Data dari Respons JSON : 
+JSON Extractor digunakan untuk mengekstraksi nilai tertentu dari JSON response yang dihasilkan dari permintaan HTTP.
+Nilai-nilai yang diekstraksi disimpan dalam variabel JMeter, yaitu `idBuku`.
+- Penggunaan Kembali Nilai yang Diekstraksi : Nilai yang disimpan dalam variabel JMeter (`idBuku`) dapat digunakan kembali dalam langkah-langkah selanjutnya dari pengujian untuk keperluan pengujian lanjutan atau verifikasi.
+- Verifikasi Data dalam Respons : JSON Path expression `$.id`, JMeter akan mencari nilai `id` dalam JSON response dan menyimpannya dalam variabel `idBuku`.
+- Dynamic Handling dan Data-Driven Testing : JSON Extractor memungkinkan pengambilan dinamis dari respons, yang sangat berguna untuk menghadapi perubahan data yang dihasilkan oleh server dari waktu ke waktu. Nilai-nilai yang diekstraksi ini memungkinkan kita untuk membangun pengujian berikutnya berdasarkan respons aktual yang diterima dari server.
+
+10. Apa itu Assertions dalam JMeter? Sebutkan contoh 3 Assertions dan kegunaannya!
+
+Dalam JMeter, Assertions digunakan untuk memverifikasi respons dari server atau aplikasi web dan memastikan bahwa respons tersebut sesuai dengan harapan. Assertions membantu dalam memvalidasi data yang diterima dari server selama pengujian beban (load testing) atau pengujian kinerja.
+
+- `Response Assertion` : digunakann untuk memverifikasi apakah respons dari server sesuai dengan kriteria yang ditetapkan.
+- `Duration Assertion` : digunakan untuk memeriksa durasi respons server dan memvalidasi apakah waktu respons masuk dalam rentang waktu yang diharapkan.
+- `Size Assertion` : digunakan untuk memverifikasi ukuran respons yang diterima dari server.
+
+11. Apa itu Number of Threads dan Ramp-up Period? Apa hubungan antar keduanya?
+
+`Number of Threads` (Jumlah Thread) merupakan jumlah pengguna virtual (thread) yang akan digunakan untuk menjalankan skenario pengujian secara bersamaan di mana setiap thread mewakili sebuah pengguna atau koneksi ke server yang akan mengirimkan permintaan.
+Contohnya, jika kita mengatur 1000 "Number of Threads", ini berarti 1000 pengguna virtual akan dibuat untuk menjalankan skenario pengujian.
+
+`Ramp-up Period` (Waktu Peningkatan) merupakan periode waktu yang dibutuhkan JMeter untuk memulai seluruh jumlah thread atau pengguna secara bertahap (ramp-up) dalam skenario pengujian yang dihitung dalam detik.
+Contohnya, jika kita mengatur "Ramp-up Period" selama 100 detik, dan "Number of Threads" 1000, maka JMeter akan memulai satu thread setiap 0.1 detik (total 1000 thread dalam 100 detik).
+
+Hubungan antar keduanya :
+`Ramp-up Period` digunakan untuk mengendalikan kecepatan di mana pengguna virtual atau thread ditambahkan ke dalam pengujian.
+Jika `Ramp-up Period` diatur lebih tinggi daripada `Number of Threads`, JMeter akan menambahkan thread secara bertahap sesuai dengan waktu yang ditentukan dalam `Ramp-up Period`.
+Keduanya bekerja bersama untuk menentukan bagaimana beban kerja akan ditetapkan ke server. Jumlah thread yang ditambahkan setiap detik (dalam `Ramp-up Period`) akan mempengaruhi tingkat beban yang akan diterima oleh server.
+
+12. Gunakan angka 1000 untuk Number of Threads dan 100 untuk Ramp-up period. 
+Jalankan Test Plan dengan konfigurasi tersebut. Kemudian, perhatikan Summary Report, View Result Tree, Graph Result, dan Assertion Result. 
+Buatlah penjelasan minimal 2 paragraf untuk menjelaskan temuan menarik kalian terhadap hasil-hasil tersebut. 
+Sertakan screenshot dari keempat result tersebut. Sertakan juga info mengenai prosesor, RAM, dan penggunaan hardisk HDD atau SSD dari perangkat Anda. (Jika perangkat Anda tidak kuat dengan angka konfigurasi tersebut, silakan turunkan angkanya.)
+
+Dengan konfigurasi tersebut, kita akan mensimulasikan beban kerja yang setara dengan 1000 pengguna secara bersamaan dalam rentang waktu 100 detik. 
+Setiap 0.1 detik, satu thread baru akan dimulai, sehingga dalam 100 detik sebanyak 1000 thread akan aktif menjalankan skenario pengujian yang ditetapkan.
+
+Berikut adalah screenshot dari `Summary Report` yang dihasilkan.
+![img_2.png](img_2.png)
+Dapat dilihat bahwa method get, update, dan search memiliki persentase error > 90%. Hal ini menunjukkan bahwa mayoritas dari sampel yang dieksekusi menghasilkan kesalahan. Berdasarkan beberapa sumber yang saya baca, hal ini dapat disebabkan oleh hal-hal berikut.
+- Beberapa kesalahan server : mungkin server tidak mampu menangani jumlah permintaan yang diterima.
+- Kesalahan pada aplikasi : mungkin ada bug atau kesalahan yang menyebabkan respons tidak benar atau permintaan gagal diproses.
+- Overload sistem atau server : kapasitas server mungkin sudah melebihi batasnya.
+
+Berikut adalah screenshot dari `View Results Tree` yang dihasilkan.
+![img_3.png](img_3.png)
+Dapat dilihat bahwa dalam satu method yang sama, sebagian berhasil dan sebagiannya lagi gagal dieksekusi. Untuk mengidentifikasi jenis kesalahan yang terjadi, kita bisa
+memeriksa informasi lebih lanjut dari log atau output yang dihasilkan oleh JMeter.
+
+Berikut adalah screenshot dari `Graph Results` yang dihasilkan.
+![img_4.png](img_4.png)
+Grafik di atas berbentuk line chart yang menampilkan metrik kinerja seperti waktu respons, throughput, atau kesalahan dalam bentuk visual sehingga lebih mudah dipahami.
+
+Berikut adalah screenshot dari `Assertion Results` yang dihasilkan.
+![img_5.png](img_5.png)
+Dari gambar di atas, kita dapat melihat hasil assertion pada setiap permintaan dan mengevaluasi apakah kondisi atau kriteria yang didefinisikan telah terpenuhi atau tidak.
+Informasi yang diberikan dalam Assertion Results dapat digunakan untuk melakukan debug, verifikasi, dan validasi terhadap respons server yang diterima.
+
+Informasi mengenai perangkat 
+- Prosesor : intel core i7
+- RAM : 8 GB
+- HDD/SSD : SSD
+
+13. Sembari menjalankan Test Plan, perhatikan pergerakan grafik pada JConsole. Buatlah penjelasan minimal 2 paragraf untuk menjelaskan temuan menarik kalian terhadap hasil-hasil tersebut. Sertakan screenshot dari grafik-grafik tersebut.
+
+Berikut adalah screenshot grafiknya.
+![img_6.png](img_6.png)
+
+- `Heap Memory Usage` : menampilkan penggunaan memori heap dari aplikasi. Ini memberikan informasi tentang penggunaan memori dalam heap, termasuk total memori, memori yang digunakan, dan memori yang tersedia.
+Nilai "289,406,976" merepresentasikan jumlah memori yang telah dialokasikan dalam heap oleh aplikasi pada saat pengukuran dilakukan.
+  Hal ini dapat diartikan bahwa aplikasi menggunakan sekitar 289,406,976 byte (atau sekitar 289 MB) dari memori heap pada saat pemantauan dilakukan.
+- `Threads` : menampilkan jumlah thread yang sedang berjalan dalam aplikasi. Terdapat tulisan "Live threads 38" yang berarti pada saat pemantauan dilakukan, terdapat 38 thread yang sedang aktif atau berjalan dalam aplikasi yang sedang dimonitor.
+- `Classes` : menampilkan jumlah kelas yang dimuat oleh aplikasi. 
+Tulisan "Classes loaded 16,565" menunjukkan bahwa pada saat pemantauan dilakukan, aplikasi telah memuat sebanyak 16,565 kelas.
+- `CPU Usage` : menunjukkan penggunaan CPU oleh aplikasi. Informasi "CPU usage 0.9%" menunjukkan bahwa pada waktu tertentu, aplikasi Java hanya menggunakan sekitar 0.9% dari total daya pemrosesan CPU yang tersedia.
+  Semakin rendah persentase penggunaan CPU, semakin sedikit daya pemrosesan yang digunakan aplikasi, yang umumnya dianggap sebagai indikator kinerja yang baik.
+
+Informasi yang diperoleh dari grafik-grafik ini memberikan pemahaman yang signifikan mengenai penggunaan sumber daya aplikasi. 
+Memantau penggunaan memori, thread aktif, jumlah kelas, dan penggunaan CPU membantu pengembang dan administrator sistem dalam mengelola kinerja aplikasi. 
+Data-data ini penting untuk mengetahui seberapa efisien aplikasi dalam mengelola sumber daya yang tersedia serta dapat membantu dalam mendeteksi potensi masalah atau optimasi yang diperlukan untuk meningkatkan performa aplikasi secara keseluruhan.
+
+14. Apa itu Load Testing? Buatlah kesimpulan dari pengerjaan tutorial JMeter & JConsole ini.
+
+Load Testing adalah metode pengujian perangkat lunak yang bertujuan untuk mengevaluasi kinerja sistem atau aplikasi di bawah beban atau beban tertentu. 
+Tujuannya adalah untuk memahami bagaimana sistem atau aplikasi akan bertindak dan menanggapi dalam situasi penggunaan yang tinggi atau beban yang ekstrem. 
+Load Testing dilakukan dengan meningkatkan secara bertahap jumlah pengguna atau beban pada sistem untuk melihat bagaimana sistem menanggapi, termasuk dalam hal waktu respons, keandalan, dan kinerja keseluruhan.
+
+`JMeter` digunakan untuk melakukan Load Testing. Melalui JMeter, kita dapat mensimulasikan beban tinggi pada aplikasi dengan mengatur jumlah pengguna yang meningkat secara bertahap dan memantau respons sistem.
+
+`JConsole` membantu dalam pemantauan dan analisis performa aplikasi secara langsung. Informasi yang disediakan seperti penggunaan memori, jumlah thread, kelas yang dimuat, dan penggunaan CPU memungkinkan pemantauan langsung terhadap kesehatan aplikasi.
+
+Kombinasi antara JMeter dan JConsole memberikan kemampuan untuk melakukan pengujian performa aplikasi, memahami cara aplikasi menanggapi beban tinggi, dan memantau metrik kinerja kunci untuk mengidentifikasi potensi masalah dalam kinerja aplikasi. 
+Dengan demikian, kita dapat melakukan penyesuaian atau optimisasi untuk meningkatkan kinerja aplikasi dalam situasi penggunaan yang tinggi atau beban yang ekstrem.
+
+### What I did not understand
+- [ ] Saat menjalankan Test Plan dengan konfigurasi 1000 Number of Threads dan 100 Ramp-up period saya sempat berkali-kali menyentuh error sebesar 100%. Saat dilihat penyebabnya selalu karena connection dan di terminal pun memang muncul build failed padahal docker sudah menyala.
+Apakah itu pure dipengaruhi karena spek laptop atau bisa karena hal lain?
+
+---
 ## Tutorial 5
 ### What I have learned today
 Web Service, Postman, Rest API

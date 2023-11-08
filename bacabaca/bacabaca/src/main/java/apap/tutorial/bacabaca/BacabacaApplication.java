@@ -33,28 +33,30 @@ public class BacabacaApplication {
 		return args -> {
 			var faker = new Faker(new Locale("in-ID"));
 
-			// Membuat fake data memanfaatkan Java Faker
-			var bukuDTO = new CreateBukuRequestDTO();
-			var fakeBook = faker.book();
-			var fakeDate = faker.date();
+			for (int i = 0; i < 1000; i++){
+				// Membuat fake data memanfaatkan Java Faker
+				var bukuDTO = new CreateBukuRequestDTO();
+				var fakeBook = faker.book();
+				var fakeDate = faker.date();
 
-			bukuDTO.setHarga(new BigDecimal(Math.random()*1000000));
-			bukuDTO.setJudul(fakeBook.title());
-			bukuDTO.setTahunTerbit(String.valueOf(fakeDate.past(36500, TimeUnit.DAYS).getYear()+1900));
+				bukuDTO.setHarga(new BigDecimal(Math.random()*1000000));
+				bukuDTO.setJudul(fakeBook.title());
+				bukuDTO.setTahunTerbit(String.valueOf(fakeDate.past(36500, TimeUnit.DAYS).getYear()+1900));
 
-			var penerbitDTO = new CreatePenerbitRequestDTO();
-			penerbitDTO.setNamaPenerbit(fakeBook.publisher());
-			penerbitDTO.setEmail(faker.internet().emailAddress());
-			penerbitDTO.setAlamat(faker.address().fullAddress());
+				var penerbitDTO = new CreatePenerbitRequestDTO();
+				penerbitDTO.setNamaPenerbit(fakeBook.publisher());
+				penerbitDTO.setEmail(faker.internet().emailAddress());
+				penerbitDTO.setAlamat(faker.address().fullAddress());
 
-			// Mapping penerbitDTO ke buku lalu save penerbit ke database
-			var penerbit = penerbitMapper.createPenerbitRequestDTOToPenerbit(penerbitDTO);
-			penerbit = penerbitService.createPenerbit(penerbit);
+				// Mapping penerbitDTO ke buku lalu save penerbit ke database
+				var penerbit = penerbitMapper.createPenerbitRequestDTOToPenerbit(penerbitDTO);
+				penerbit = penerbitService.createPenerbit(penerbit);
 
-			// Mapping bukuDTO ke buku lalu save buku ke database
-			var buku = bukuMapper.createBukuRequestDTOToBuku(bukuDTO);
-			buku.setPenerbit(penerbit);
-			bukuService.saveBuku(buku);
+				// Mapping bukuDTO ke buku lalu save buku ke database
+				var buku = bukuMapper.createBukuRequestDTOToBuku(bukuDTO);
+				buku.setPenerbit(penerbit);
+				bukuService.saveBuku(buku);
+			}
 		};
 	}
 

@@ -23,7 +23,7 @@ public class Penerbit {
     private long idPenerbit;
 
     @NotNull
-    @Size(max = 30)
+    // @Size(max = 30)
     @Column(name = "nama_penerbit", nullable = false)
     private String namaPenerbit;
 

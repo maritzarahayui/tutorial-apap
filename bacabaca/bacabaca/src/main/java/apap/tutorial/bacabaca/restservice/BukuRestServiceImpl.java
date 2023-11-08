@@ -2,8 +2,11 @@ package apap.tutorial.bacabaca.restservice;
 
 //import apap.tutorial.bacabaca.dto.response.BukuDetailResponse;
 import apap.tutorial.bacabaca.dto.request.TranslateRequestDTO;
+import apap.tutorial.bacabaca.dto.request.UpdateBukuRequestDTO;
+import apap.tutorial.bacabaca.dto.request.UpdatePenerbitRequestDTO;
 import apap.tutorial.bacabaca.dto.response.ResponseData;
 import apap.tutorial.bacabaca.model.Buku;
+import apap.tutorial.bacabaca.model.Penerbit;
 import apap.tutorial.bacabaca.repository.BukuDb;
 import apap.tutorial.bacabaca.rest.BukuDetail;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -90,11 +93,11 @@ public class BukuRestServiceImpl implements BukuRestService {
         return response;
     }
 
-    @Override
-    public void restUpdateBuku(Buku bukuDTO) {
-        bukuDTO.setJudul(bukuDTO.getJudul());
-        bukuDb.save(bukuDTO);
-    }
+    // @Override
+    // public void restUpdateBuku(Buku bukuDTO) {
+    //     bukuDTO.setJudul(bukuDTO.getJudul());
+    //     bukuDb.save(bukuDTO);
+    // }
 
     @Override
     public Mono<ResponseData> translateBookTitle(TranslateRequestDTO requestDTO) {
@@ -179,6 +182,32 @@ public class BukuRestServiceImpl implements BukuRestService {
         } catch (Exception e) {
             throw new RuntimeException("Gagal mengambil data buku populer: " + e.getMessage());
         }
+    }
+
+    @Override
+    public Buku restUpdateBuku(Buku bukuDTO) {
+        Buku buku = getRestBukuById(bukuDTO.getId());
+
+        if (buku != null) {
+            buku.setPenerbit(bukuDTO.getPenerbit());
+            buku.setHarga(bukuDTO.getHarga());
+            buku.setJudul(bukuDTO.getJudul());
+            buku.setTahunTerbit(bukuDTO.getTahunTerbit());
+            buku.setListPenulis(bukuDTO.getListPenulis());
+            bukuDb.save(buku);
+        }
+
+        return buku;
+    }
+
+    @Override
+    public List<Buku> getAllBukuOrderedByJudul() {
+        return bukuDb.findAllByOrderByJudulAsc();
+    }
+
+    @Override
+    public List<Buku> searchBukuByJudul(String searchJudul) {
+        return bukuDb.findBukuByJudulContainingIgnoreCaseOrderByJudulAsc(searchJudul);
     }
 
 }
