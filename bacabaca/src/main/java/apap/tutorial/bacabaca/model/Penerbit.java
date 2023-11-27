@@ -38,7 +38,6 @@ public class Penerbit {
     @OneToMany(mappedBy = "penerbit", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<Buku> listBuku;
 
-    @NotNull
-    @Column(name = "is_deleted", nullable = false)
+    @Column(name = "is_deleted")
     private Boolean isDeleted = false;
 }

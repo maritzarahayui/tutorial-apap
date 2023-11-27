@@ -1,8 +1,7 @@
 version: '3.3'
 services:
   web:
-    build:
-      context: .
+    image: apap-registry.cs.ui.ac.id/maritza.rahayu/apap-102
     restart: always
     ports:
       - "10102:8080"
@@ -11,23 +10,6 @@ services:
       - ./log:/log
     env_file:
       - bacabaca/.env
-    depends_on:
-      - db
-    networks:
-      - frontend-network
-      - backend-network
-
-  web2:
-    build:
-      context: .
-    restart: always
-    ports:
-      - "10103:2020"
-    volumes:
-      - ./file-storage:/file-storage
-      - ./log:/log
-    env_file:
-      - bacabaca/.env.app2
     depends_on:
       - db
     networks:
@@ -49,7 +31,6 @@ services:
 
 volumes:
   db:
-    driver: local
 
 networks:
   frontend-network:
