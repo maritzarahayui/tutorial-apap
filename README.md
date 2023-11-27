@@ -5,6 +5,249 @@
 * **Maritza Rahayu Indriyani** - *2106751474* - *A* 
 
 ---
+## Tutorial 7
+### What I have learned today
+Docker, NGINX, & CI/CD
+
+### Pertanyaan
+1. Apa itu Dockerfile dan docker-compose.yaml? Apa fungsinya?
+
+`Dockerfile` adalah file yang berisi serangkaian instruksi yang akan digunakan oleh Docker untuk membuat image container.
+
+Fungsi:
+- Mendefinisikan basis image untuk mengetahui dari mana suatu image baru akan dibangun.
+- Menambahkan dan menginstal paket-paket atau dependensi yang diperlukan oleh aplikasi.
+- Menyalin file atau direktori dari sistem lokal ke dalam image.
+- Menjalankan perintah yang diperlukan selama pembuatan image.
+- Menetapkan environment yang dibutuhkan aplikasi.
+
+`docker-compose.yaml` adalah file yang digunakan untuk mendefinisikan layanan, jaringan, dan volume multi-container.
+
+Fungsi:
+- Menyediakan daftar container yang akan dibuat.
+- Mendefinisikan jaringan khusus atau jaringan default.
+- Menyediakan volume untuk berbagi data antara container satu dengan yang lain.
+
+2. Screenshot hasil perubahan anda. Setelah anda menyelesaikan tutorial ini, menurut anda, mengapa kita perlu mengganti port?
+
+![img_8.png](img_8.png)
+
+Port tersebut perlu diganti untuk memisahkan lingkungan development dengan lingkungan production 
+sehingga meminimalisir terjadinya konflik.
+
+3. Apa saja yang terjadi di langkah ini?
+
+- File .env yang berisi environment variables akan digunakan dalam pengembangan dan produksi aplikasi. 
+- Perintah `.\gradlew.bat build -x test` akan menghasilkan file JAR dari proyek Gradle yang sedang dijalankan.
+- Perintah `docker-compose up` akan membangun dan menjalankan aplikasi dengan memanfaatkan konfigurasi Docker Compose.
+Selanjutnya, Docker Compose akan membangun image yang diperlukan berikut menjalankan container-container yang sesuai. 
+Docker Compose juga akan memastikan bahwa layanan database sudah berjalan sebelum layanan web dijalankan, sesuai dengan konfigurasi `depends_on`.
+
+Melalui langkah-langkah ini, aplikasi dapat diakses melalui http://localhost:10102 karena port tersebut telah dimapping ke port 8080 dari layanan web.
+
+4. Sertakan screenshot container yang sedang berjalan (versi gui atau cli, pilih salah satu). Apa itu docker images, docker container, dan docker volume?
+
+![img_9.png](img_9.png)
+
+- Docker Images : paket berisi aplikasi beserta semua dependensinya, termasuk sistem operasi, library, dan kode aplikasi.
+Image ini adalah blueprint yang digunakan untuk membuat containers dan dapat dianggap sebagai snapshot yang dapat dibagikan dari suatu environment yang dapat berjalan di mana saja.
+Images dapat dibuat menggunakan Dockerfile dan dapat disimpan di Docker Hub atau registry Docker lain.
+- Docker Container : instance yang berjalan dari Docker Image untuk menyatukan aplikasi beserta seluruh dependensinya.
+Container membuat deployment menjadi lebih mudah karena memastikan bahwa aplikasi beserta dependensinya berjalan dengan cara yang konsisten di berbagai environment.
+- Docker Volume : menyimpan data yang dibutuhkan oleh container meskipun container tersebut dihancurkan atau diperbarui.
+
+5. Apa perbedaan docker-compose down dan docker stop?
+
+`docker-compose down` digunakan untuk menghentikan dan menghapus layanan yang didefinisikan di dalam file `docker-compose.yml`.
+Perintah ini akan mematikan dan menghapus seluruh environment yang dibuat saat `docker-compose up` termasuk container, volume, dan network.
+Sedangkan `docker stop` digunakan untuk menghentikan container yang sedang berjalan tanpa menghapus sumber daya tambahan seperti volume atau network.
+Container yang dihentikan masih ada di dalam sistem dan dapat dijalankan kembali dengan perintah `docker start`.
+
+6. Sertakan screenshot mengakses laman kirti milik anda melalui browser (seperti screenshot di atas)
+
+![img_10.png](img_10.png)
+
+7. Ceritakan pengalaman anda melakukan deployment ke Kirti. Kendala apa yang anda alami?
+
+Aku baru tau ada server yang namanya Kirti. Selama ngerjain tutorial ini, jadi selalu keinget tugas SOSI yang pake bash kayak gini juga (ribet dan nyebelin).
+Kendala yang aku alami mulai dari proses mem-build jar menggunakan perintah `bash gradlew build -x test` memakan waktu yang tidak sebentar, terus waktu jalanin perintah
+`docker-compose up -d` dan `docker-compose down` juga gak bisa sekali coba langsung jalan, minimal 2x lah. Errornya selalu karena connection. Huft :(
+
+8. hah
+
+
+9. Buka container docker Anda, lalu screenshot. Apa perbedaan tampilan container sekarang dengan tampilan container pada langkah tutorial docker di awal tadi?
+
+![img_11.png](img_11.png)
+
+Terdapat tambahan container web2-1. Hal tersebut terjadi karena terdapat penambahan kode pada file `docker-compose.yml` yang berisi sebagai berikut.
+
+```
+web2:
+    build:
+      context: .
+    restart: always
+    ports:
+      - "10103:2020"
+    volumes:
+      - ./file-storage:/file-storage
+      - ./log:/log
+    env_file:
+      - bacabaca/.env.app2
+    depends_on:
+      - db
+    networks:
+      - frontend-network
+      - backend-network
+```
+
+10. Sertakan screenshot tampilan web ketika pertama kali menjalankan localhost:9090/port dan tampilan web ketika halaman di-refresh.
+
+Gak bisa :( Selalu muncul gini dari awal sampai refresh berkali-kali juga
+
+![img_14.png](img_14.png)
+
+11. Apa yang dimaksud load balancing?  Pada langkah keberapa kita mengatur konfigurasi untuk load balancing? Jelaskan blok baris yang mengatur hal tersebut.
+
+Load balancing adalah suatu metode yang digunakan untuk mendistribusikan lalu lintas jaringan atau beban kerja komputasi secara merata ke sejumlah server atau sumber daya komputasi lainnya.
+Tujuan dari load balancing ini adalah untuk memastikan agar tidak ada satu server atau sumber daya tertentu yang mengalami beban kerja berlebihan, sementara
+yang lainnya memiliki beban kerja ringan.
+
+Kita mengatur konfigurasi load balancing pada langkah ke-9 di dalam file `nginx.conf` pada block `http` seperti berikut.
+```
+http {
+    # ...
+
+    upstream homepage {
+        server localhost:10102;
+        server localhost:10103;
+    }
+
+    server {
+        listen       9090;
+
+        location / {
+            proxy_pass "http://homepage";
+        }
+
+        # ...
+    }
+
+    # ...
+}
+```
+
+`upstream homepage` digunakan untuk mendefinisikan kelompok server yang akan dilakukan load balancing, yaitu `server localhost:10102;` dan `server localhost:10103;`
+
+`location /` digunakan untuk mengatur konfigurasi untuk request yang masuk ke dalam root URL ("/") di mana `proxy_pass "http://homepage";` akan mengarahkan permintaan ke server yang telah didefinisikan dalam kelompok `homepage`, sehingga
+Nginx akan melakukan load balancing di antara server-server ini.
+
+`listen 9090` merupakan server yang dapat diakses dari luar dan akan menerima permintaan dari pengguna.
+
+12. Apa yang dimaksud reverse proxy?  Pada langkah keberapa kita mengatur konfigurasi untuk reverse proxy?
+
+Reverse proxy adalah server yang berfungsi sebagai perantara antara klien dengan server di belakangnya.
+Ketika klien mengirimkan permintaan ke server, reverse proxy lah yang akan menerima permintaan tersebut baru kemudian mengirimkannya ke server yang sesungguhnya.
+
+Konfigurasi untuk reverse proxy diatur bersamaan dengan load balancing pada langkah ke-9.
+
+13. Jelaskan baris yang mengatur hal tersebut dan jelaskan kegunaannya dalam pengerjaan tugas kelompok nanti.
+```
+server {
+    listen       9090;
+
+    location / {
+        proxy_pass "http://homepage";
+    }
+
+    # ...
+}
+```
+
+Melalui konfigurasi ini, Nginx akan menerima permintaan dari klien pada port 9090 dan meneruskannya ke server atau kelompok server di belakangnya.
+Dalam pengerjaan tugas kelompok, konfigurasi Nginx ini akan sangat berperan dalam mengurangi beban dalam satu server (load balancing) yang diakses secara bersamaan oleh banyak orang. 
+
+14. Kendala apa yang anda hadapi ketika melakukan tutorial bagian nginx?
+
+Kendala yang saya hadapi adalah page `active-port.html` tidak berhasil dirender padahal konfigurasi sudah sesuai.
+Page yang muncul adalah connection refused atau seperti berikut.
+
+![img_12.png](img_12.png)
+
+Saya sudah coba uninstall kemudian reinstall nginx nya lagi, sudah mencoba nginx dari berbagai versi, namun tetap tidak berhasil.
+
+15. Apa fungsi dari SSH keys yang Anda buat dengan menggunakan ssh-keygen? Apa perbedaan antara file ~/.ssh/deployer_apap.pub dan ~/.ssh/deployer_apap ?
+
+SSH keys yang dibuat dengan menggunakan `ssh-keygen` memiliki fungsi sebagai metode autentikasi yang lebih aman daripada penggunaan password.
+
+`~/.ssh/deployer_apap` merupakan private key yang digunakan untuk membuktikan identitas pengguna saat terhubung ke server. Private key ini harus tetap aman dan hanya ada di sistem pengguna.
+
+`~/.ssh/deployer_apap.pub` merupakan public key yang dapat dibagikan ke server atau sistem lain yang akan memverifikasi identitas pengguna.
+
+16. Apa perbedaan antara GitLab repository dan GitLab runner?
+
+`GitLab Repository` adalah tempat penyimpanan proyek Git, sedangkan `GitLab Runner` adalah alat untuk menjalankan otomatisasi CI/CD pada proyek tersebut. Runner memungkinkan GitLab untuk secara otomatis menjalankan langkah-langkah CI/CD pada kode yang diunggah ke repositori.
+
+17. Apa perbedaan antara Continuous Integration, Continuous Delivery, dan Continuous Deployment?
+
+- `Continuous Integration (CI)` fokus pada penggabungan dan integrasi kode secara teratur.
+- `Continuous Delivery (CD)` memastikan bahwa perangkat lunak dapat diimplementasikan dengan cepat.
+- `Continuous Deployment` melibatkan rilis otomatis ke produksi setelah berhasil melewati semua tahap uji dan persetujuan.
+
+18. Apa perbedaan dari stages-stages yang berada dalam file .gitlab-ci.yml?
+
+- `build` berfokus pada kompilasi kode
+- `test` berfokus pada pengujian
+- `build-image` dan `publish-image` berfokus pada pembuatan dan distribusi Docker image
+- `deploy` berfokus pada penerapan aplikasi ke server tujuan
+
+19. Pada script gitlab-ci.yml, terdapat perubahan if: $CI_COMMIT_BRANCH == 'main' menjadi if: $CI_COMMIT_BRANCH == 'feat/tutorial-7-bacabaca'. Apa fungsi dari perubahan tersebut?
+
+Perubahan tersebut berfungsi untuk menjalankan script hanya jika suatu commit atau perubahan di-push ke branch `feat/tutorial-7-bacabaca`.
+
+20. Apa yang dimaksud dengan "docker registry"? Apa fungsinya?
+
+`Docker Registry` adalah tempat di mana kita dapat menyimpan, mengelola, dan mendistribusikan image Docker.
+Contoh Docker Registry yang umum digunakan adalah Docker Hub. 
+
+Fungsi Docker Registry :
+- Menyimpan image yang telah dibuat secara lokal atau dihasilkan melalui proses CI/CD.
+- Memberikan tag pada image untuk menandakan versi tertentu, membantu dalam pelacakan dan pengelolaan perubahan.
+- Distribusi image ke berbagai lingkungan dan memfasilitasi kolaborasi tim.
+- Memastikan keamanan selama distribusi image sehingga membantu melindungi integritas dan keaslian image Docker.
+
+21. Dalam gitlab CI/CD, apa perbedaan antara: pipeline, stage, dan job?
+
+`Pipeline` adalah serangkaian job yang dieksekusi secara berurutan. Pipeline berfungsi untuk merepresentasikan seluruh alur CI/CD, dimulai dari sumber kode
+hingga pengujian dan implementasi. Setiap perubahan dalam repositori akan memicu pembuatan pipeline.
+
+`Stage` adalah bagian dari pipeline yang berisi satu atau lebih job yang seharusnya dijalankan bersama-sama. Stage memecah pipeline menjadi tahap-tahap tertentu.
+Stage memungkinkan kita untuk mengelompokkan job ke dalam beberapa fase, seperti "build," "test," dan "deploy," sehingga memudahkan untuk melihat dan memahami progres dan hasil CI/CD.
+
+`Job` adalah unit eksekusi yang melakukan tugas tertentu dalam pipeline. Contoh job adalah melakukan kompilasi kode, pengujian, atau distribusi aplikasi.
+
+Hubungan ketiganya:
+- Satu pipeline dapat memiliki beberapa stage, dan setiap stage dapat memiliki satu atau lebih job.
+- Setiap stage dalam pipeline dijalankan setelah berhasil menyelesaikan stage sebelumnya.
+- Setiap job dalam satu stage dijalankan secara bersamaan, kecuali jika ada ketergantungan antar job.
+
+22. Sertakan screenshot fullscreen saat Anda mengakses apap-102.cs.ui.ac.id ketika sudah berhasil men-deploy aplikasi menggunakan CI/CD!
+
+![img_13.png](img_13.png)
+
+23. Kapan proses CI/CD dijalankan di GitLab?
+
+Proses CI/CD dijalankan di GitLab ketika ada perubahan pada repositori yang memicu event tertentu, seperti push ke branch atau pembukaan merge request.
+
+24. Mengapa CI/CD ini penting? Apa manfaatnya?
+
+CI/CD penting karena memungkinkan otomatisasi proses pengujian, pengintegrasian, dan penyebaran perangkat lunak.
+CI/CD bermanfaat dalam meningkatkan kualitas kode, mempercepat siklus pengembangan, dan meminimalkan risiko kesalahan dalam pengiriman perangkat lunak ke produksi.
+
+### What I did not understand
+- [ ] Banyak
+
+---
 ## Tutorial 6
 ### What I have learned today
 Advanced Git, JMeter, dan JConsole
